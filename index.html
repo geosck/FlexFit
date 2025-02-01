@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Every-Second-Day Workout Plan</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body.dark-mode {
+      background-color: #333;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+    body.light-mode {
+      background-color: #fff;
+      color: #333;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .access-circle {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      overflow: hidden;
+      background-color: #e74c3c;
+    }
+    .access-circle.active {
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      transform: none;
+      border-radius: 0;
+      background-color: #222;
+    }
+    .menu-text {
+      font-size: 1rem;
+      color: #fff;
+      transition: opacity 0.3s ease;
+    }
+    .access-circle.active .menu-text {
+      display: none;
+    }
+
+    .nav-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 1rem;
+      transform: scale(1.1);
+      transform-origin: top center;
+    }
+    .access-circle.active .nav-container {
+      display: block;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .heading-section {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+    body.dark-mode .heading-section {
+      background-color: #444; 
+      color: #fff;
+    }
+    body.light-mode .heading-section {
+      background-color: #eee; 
+      color: #333;
+    }
+    .heading-section h1 {
+      margin: 0.5rem 0;
+    }
+
+    .main-content {
+      max-width: 800px;  
+      margin: 0 auto;    
+      padding: 1rem;     
+    }
+
+    .schedule-banner {
+      padding: 10px;
+      border-radius: 5px;
+      margin: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    body.dark-mode .schedule-banner {
+      background: #444;
+      color: #fff;
+    }
+    body.light-mode .schedule-banner {
+      background: #eee;
+      color: #333;
+    }
+
+    #dateTimeDisplay {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    body.dark-mode #dateTimeDisplay {
+      background-color: #666;
+      color: #fff;
+    }
+    body.light-mode #dateTimeDisplay {
+      background-color: #ccc;
+      color: #333;
+    }
+
+    .day-card {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-top: 1rem;
+    }
+    body.dark-mode .day-card {
+      background-color: #555; 
+      color: #fff;
+    }
+    body.light-mode .day-card {
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    .exercise {
+      margin: 10px 0;
+    }
+
+    /* Make the exercise name look clickable (cursor pointer, maybe underline on hover) */
+    .exercise-name {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Button styling */
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      transition: background 0.3s;
+    }
+    body.dark-mode button {
+      background: #fff;
+      color: #333;
+    }
+    body.dark-mode button:hover {
+      background: #e0e0e0;
+    }
+    body.light-mode button {
+      background: #333;
+      color: #fff;
+    }
+    body.light-mode button:hover {
+      background: #555;
+    }
+
+    .return-home-btn {
+      margin-top: 30px;
+    }
+
+    /* Toggle Icon (Sun/Moon) */
+    .toggle-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle-icon .sun-icon {
+      display: inline;
+    }
+    .toggle-icon .moon-icon {
+      display: none;
+    }
+    body.light-mode .toggle-icon .sun-icon {
+      display: none;
+    }
+    body.light-mode .toggle-icon .moon-icon {
+      display: inline;
+    }
+
+    /* Hidden video container for each exercise. */
+    .video-container {
+      margin-top: 10px;
+      display: none;
+    }
+    .video-container iframe {
+      width: 100%;
+      height: 300px;
+    }
+  </style>
+</head>
+
+<body class="dark-mode">
+
+  <div class="access-circle" onclick="openCircle()">
+    <div class="menu-text">Menu</div>
+
+    <div class="nav-container">
+      <div class="container">
+        <div class="toggle-icon" onclick="toggleDarkMode(event)">
+          <span class="sun-icon">☀️</span>
+          <span class="moon-icon">🌙</span>
+        </div>
+        <div class="heading-section">
+          <h1>FlexFit Pro</h1>
+          <h1>Flexible Every-Second-Day Program 🗓️</h1>
+        </div>
+      </div> <!-- end container -->
+
+      <div class="main-content">
+        <div class="schedule-banner">
+          ⚡ Train | 🧘 Rest | Train | 🧘 Rest | Repeat
+          <span id="dateTimeDisplay"></span>
+        </div>
+
+        <div id="workoutContainer"></div>
+
+        <button class="return-home-btn" onclick="closeCircle()">
+          Return to Homepage
+        </button>
+      </div> <!-- .main-content -->
+    </div> <!-- .nav-container -->
+  </div> <!-- .access-circle -->
+
+  <script>
+    /* === 1) Toggle Dark/Light Mode === */
+    function toggleDarkMode(event) {
+      event.stopPropagation(); 
+      document.body.classList.toggle('light-mode');
+    }
+
+    /* === 2) Circle open/close === */
+    function openCircle() {
+      const circle = document.querySelector('.access-circle');
+      if (!circle.classList.contains('active')) {
+        circle.classList.add('active');
+      }
+    }
+
+    function closeCircle() {
+      const circle = document.querySelector('.access-circle');
+      if (circle.classList.contains('active')) {
+        circle.classList.remove('active');
+      }
+      currentWorkoutIndex = 0;
+      renderWorkout();
+    }
+
+    /* === 3) Real-Time Date & Time === */
+    function updateDateTime() {
+      const now = new Date();
+      const dateString = now.toLocaleDateString();
+      const timeString = now.toLocaleTimeString();
+      document.getElementById("dateTimeDisplay").textContent =
+        `${dateString} - ${timeString}`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    /* === 4) Updated Workout Plan with clickable exercise names === */
+    const workoutPlan = [
+      {
+        title: "Workout 1: Full-Body Strength & HIIT",
+        exercises: [
+          { name: "Goblet Squats: 3x10-12 reps", video: "https://www.youtube.com/embed/Xla9UpVbAGQ" },
+          { name: "Push-Ups: 3x10-15 reps",      video: "https://www.youtube.com/embed/_l3ySVKYVJ8" },
+          { name: "Bent-Over Rows: 3x10-12 reps",video: "https://www.youtube.com/embed/dKBH6B3ze9U" },
+          { name: "HIIT: 15-min bike sprints (30s/1m)", video: "https://www.youtube.com/embed/otau0V85g4c" }
+        ]
+      },
+      {
+        title: "Workout 2: Cardio & Core Focus",
+        exercises: [
+          { name: "30-min incline walk/jog", video: "https://www.youtube.com/embed/GOLyQruJ0-c" },
+          { name: "Plank: 3x60 sec",         video: "https://www.youtube.com/embed/pvIjsG5Svck" },
+          { name: "Russian Twists: 3x20 reps", video: "https://www.youtube.com/embed/wkD8rjkodUI" },
+          { name: "Leg Raises: 3x15 reps",   video: "https://www.youtube.com/embed/JB2oyawG9KI" }
+        ]
+      },
+      {
+        title: "Workout 3: Strength & Mobility",
+        exercises: [
+          { name: "Bodyweight Squats: 3x15 reps", video: "https://www.youtube.com/embed/aclHkVaku9U" },
+          { name: "Overhead Press: 3x10-12 reps", video: "https://www.youtube.com/embed/2yjwXTZQDDI" },
+          { name: "Bird Dogs: 3x12/side",         video: "https://www.youtube.com/embed/vZSwEbhCyoE" },
+          { name: "Thoracic Rotations: 2x8/side", video: "https://www.youtube.com/embed/xfSNVB6T6r8" }
+        ]
+      }
+    ];
+
+    let currentWorkoutIndex = 0;
+    let workoutCompletions = [null, null, null];
+
+    /* === 5) Render the workouts (exercise name is clickable) === */
+    function renderWorkout() {
+      const container = document.getElementById('workoutContainer');
+      const workout = workoutPlan[currentWorkoutIndex];
+
+      const nextInfo =
+        currentWorkoutIndex < workoutPlan.length - 1
+          ? workoutPlan[currentWorkoutIndex + 1].title
+          : "Rest Day → Workout 1";
+
+      const lastCompletion = workoutCompletions[currentWorkoutIndex]
+        ? `Last completed on: ${workoutCompletions[currentWorkoutIndex]}`
+        : "Not completed yet.";
+
+      // Build exercises with clickable name
+      const exercisesHtml = workout.exercises.map((ex, idx) => `
+        <div class="exercise">
+          <!-- Click on the exercise name to toggleVideo -->
+          <div>
+            ✔️ <span class="exercise-name" onclick="toggleVideo(${idx})">${ex.name}</span>
+          </div>
+          <div class="video-container" id="video-${idx}">
+            <iframe 
+              src="${ex.video}" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="day-card">
+          <h2>${workout.title}</h2>
+          ${exercisesHtml}
+          <button onclick="completeWorkout()" style="margin-top: 1rem;">
+            I Completed This Workout ✅
+          </button>
+          <div style="margin-top: 15px;">
+            Next: ${nextInfo}
+          </div>
+          <div style="margin-top: 5px;">
+            ${lastCompletion}
+          </div>
+        </div>
+      `;
+    }
+
+    /* === Toggle the video container on/off by ID === */
+    function toggleVideo(exIdx) {
+      const videoDiv = document.getElementById(`video-${exIdx}`);
+      if (videoDiv.style.display === 'none' || videoDiv.style.display === '') {
+        videoDiv.style.display = 'block';
+      } else {
+        videoDiv.style.display = 'none';
+      }
+    }
+
+    /* === 6) Mark workout as completed & move on === */
+    function completeWorkout() {
+      const now = new Date();
+      workoutCompletions[currentWorkoutIndex] = now.toLocaleString();
+      currentWorkoutIndex = (currentWorkoutIndex + 1) % workoutPlan.length;
+      renderWorkout();
+    }
+
+    // Init first workout
+    renderWorkout();
+  </script>
+</body>
+</html>
