@@ -2,22 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Ensures proper scaling on mobile devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Every-Second-Day Workout Plan</title>
+
   <style>
+    /********************************************************
+     * Basic Reset & Global
+     ********************************************************/
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
+    html, body {
+      height: 100%;
+    }
+
+    /********************************************************
+     * Dark vs. Light Mode on <body>
+     ********************************************************/
     body.dark-mode {
       background-color: #333;
       color: #fff;
       font-family: Arial, sans-serif;
-      overflow: hidden;
-      height: 100vh;
+      overflow: hidden; /* Hide main scroll if circle is closed */
+      height: 100vh;    /* Force full viewport height */
     }
+
     body.light-mode {
       background-color: #fff;
       color: #333;
@@ -26,13 +39,18 @@
       height: 100vh;
     }
 
+    /********************************************************
+     * Circle & Container
+     ********************************************************/
     .access-circle {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      /* Use viewport-based width/height for responsive scaling */
       width: 60px;
       height: 60px;
+
       border-radius: 50%;
       cursor: pointer;
       transition: all 0.5s ease;
@@ -43,6 +61,7 @@
       overflow: hidden;
       background-color: #e74c3c;
     }
+
     .access-circle.active {
       width: 100vw;
       height: 100vh;
@@ -52,11 +71,13 @@
       border-radius: 0;
       background-color: #222;
     }
+
     .menu-text {
       font-size: 1rem;
       color: #fff;
       transition: opacity 0.3s ease;
     }
+
     .access-circle.active .menu-text {
       display: none;
     }
@@ -65,8 +86,9 @@
       display: none;
       width: 100%;
       height: 100%;
-      overflow-y: auto;
+      overflow-y: auto; /* allow scrolling of expanded content */
       padding: 1rem;
+      /* We scale up 10% for a bigger feel on desktop */
       transform: scale(1.1);
       transform-origin: top center;
     }
@@ -74,6 +96,28 @@
       display: block;
     }
 
+    /********************************************************
+     * Responsive Circle
+     * - Smaller on narrow screens
+     ********************************************************/
+    @media (max-width: 600px) {
+      .access-circle {
+        width: 50px;
+        height: 50px;
+      }
+      .menu-text {
+        font-size: 0.9rem;
+      }
+      .nav-container {
+        /* On smaller screens, remove the extra 10% scale 
+           so it fits better */
+        transform: scale(1.0);
+      }
+    }
+
+    /********************************************************
+     * Main Containers
+     ********************************************************/
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -86,23 +130,23 @@
       margin-bottom: 1rem;
     }
     body.dark-mode .heading-section {
-      background-color: #444; 
+      background-color: #444;
       color: #fff;
     }
     body.light-mode .heading-section {
-      background-color: #eee; 
+      background-color: #eee;
       color: #333;
-    }
-    .heading-section h1 {
-      margin: 0.5rem 0;
     }
 
     .main-content {
-      max-width: 800px;  
-      margin: 0 auto;    
-      padding: 1rem;     
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
     }
 
+    /********************************************************
+     * Schedule Banner
+     ********************************************************/
     .schedule-banner {
       padding: 10px;
       border-radius: 5px;
@@ -119,6 +163,9 @@
       color: #333;
     }
 
+    /********************************************************
+     * Date/Time Display
+     ********************************************************/
     #dateTimeDisplay {
       display: inline-block;
       margin-left: 10px;
@@ -136,13 +183,16 @@
       color: #333;
     }
 
+    /********************************************************
+     * Workout Cards
+     ********************************************************/
     .day-card {
       padding: 1rem;
       border-radius: 5px;
       margin-top: 1rem;
     }
     body.dark-mode .day-card {
-      background-color: #555; 
+      background-color: #555;
       color: #fff;
     }
     body.light-mode .day-card {
@@ -154,13 +204,15 @@
       margin: 10px 0;
     }
 
-    /* Make the exercise name look clickable (cursor pointer, maybe underline on hover) */
+    /* Make the exercise name look clickable */
     .exercise-name {
       cursor: pointer;
       text-decoration: underline;
     }
 
-    /* Button styling */
+    /********************************************************
+     * Buttons
+     ********************************************************/
     button {
       margin-top: 10px;
       padding: 8px 16px;
@@ -189,7 +241,9 @@
       margin-top: 30px;
     }
 
-    /* Toggle Icon (Sun/Moon) */
+    /********************************************************
+     * Toggle Icon (Sun/Moon)
+     ********************************************************/
     .toggle-icon {
       position: absolute;
       top: 10px;
@@ -220,24 +274,45 @@
       width: 100%;
       height: 300px;
     }
+
+    /********************************************************
+     * Further Responsive Adjustments
+     ********************************************************/
+    @media (max-width: 600px) {
+      .heading-section h1 {
+        font-size: 1.2rem;
+      }
+      .day-card {
+        padding: 0.75rem;
+      }
+      button {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+      }
+      .video-container iframe {
+        height: 200px;  /* shorter video embed on small screens */
+      }
+    }
   </style>
 </head>
 
 <body class="dark-mode">
-
   <div class="access-circle" onclick="openCircle()">
     <div class="menu-text">Menu</div>
 
     <div class="nav-container">
       <div class="container">
+
         <div class="toggle-icon" onclick="toggleDarkMode(event)">
           <span class="sun-icon">☀️</span>
           <span class="moon-icon">🌙</span>
         </div>
+
         <div class="heading-section">
           <h1>FlexFit Pro</h1>
           <h1>Flexible Every-Second-Day Program 🗓️</h1>
         </div>
+
       </div> <!-- end container -->
 
       <div class="main-content">
@@ -251,14 +326,14 @@
         <button class="return-home-btn" onclick="closeCircle()">
           Return to Homepage
         </button>
-      </div> <!-- .main-content -->
-    </div> <!-- .nav-container -->
-  </div> <!-- .access-circle -->
+      </div>
+    </div>
+  </div>
 
   <script>
     /* === 1) Toggle Dark/Light Mode === */
     function toggleDarkMode(event) {
-      event.stopPropagation(); 
+      event.stopPropagation();
       document.body.classList.toggle('light-mode');
     }
 
@@ -295,28 +370,28 @@
       {
         title: "Workout 1: Full-Body Strength & HIIT",
         exercises: [
-          { name: "Goblet Squats: 3x10-12 reps", video: "https://www.youtube.com/embed/Xla9UpVbAGQ" },
-          { name: "Push-Ups: 3x10-15 reps",      video: "https://www.youtube.com/embed/_l3ySVKYVJ8" },
-          { name: "Bent-Over Rows: 3x10-12 reps",video: "https://www.youtube.com/embed/dKBH6B3ze9U" },
-          { name: "HIIT: 15-min bike sprints (30s/1m)", video: "https://www.youtube.com/embed/otau0V85g4c" }
+          { name: "Goblet Squats: 3x10-12 reps",    video: "https://www.youtube.com/embed/Xla9UpVbAGQ" },
+          { name: "Push-Ups: 3x10-15 reps",         video: "https://www.youtube.com/embed/_l3ySVKYVJ8" },
+          { name: "Bent-Over Rows: 3x10-12 reps",   video: "https://www.youtube.com/embed/dKBH6B3ze9U" },
+          { name: "HIIT: 15-min bike sprints",      video: "https://www.youtube.com/embed/otau0V85g4c" }
         ]
       },
       {
         title: "Workout 2: Cardio & Core Focus",
         exercises: [
-          { name: "30-min incline walk/jog", video: "https://www.youtube.com/embed/GOLyQruJ0-c" },
-          { name: "Plank: 3x60 sec",         video: "https://www.youtube.com/embed/pvIjsG5Svck" },
-          { name: "Russian Twists: 3x20 reps", video: "https://www.youtube.com/embed/wkD8rjkodUI" },
-          { name: "Leg Raises: 3x15 reps",   video: "https://www.youtube.com/embed/JB2oyawG9KI" }
+          { name: "30-min incline walk/jog",        video: "https://www.youtube.com/embed/GOLyQruJ0-c" },
+          { name: "Plank: 3x60 sec",                video: "https://www.youtube.com/embed/pvIjsG5Svck" },
+          { name: "Russian Twists: 3x20 reps",      video: "https://www.youtube.com/embed/wkD8rjkodUI" },
+          { name: "Leg Raises: 3x15 reps",          video: "https://www.youtube.com/embed/JB2oyawG9KI" }
         ]
       },
       {
         title: "Workout 3: Strength & Mobility",
         exercises: [
-          { name: "Bodyweight Squats: 3x15 reps", video: "https://www.youtube.com/embed/aclHkVaku9U" },
-          { name: "Overhead Press: 3x10-12 reps", video: "https://www.youtube.com/embed/2yjwXTZQDDI" },
-          { name: "Bird Dogs: 3x12/side",         video: "https://www.youtube.com/embed/vZSwEbhCyoE" },
-          { name: "Thoracic Rotations: 2x8/side", video: "https://www.youtube.com/embed/xfSNVB6T6r8" }
+          { name: "Bodyweight Squats: 3x15 reps",   video: "https://www.youtube.com/embed/aclHkVaku9U" },
+          { name: "Overhead Press: 3x10-12 reps",   video: "https://www.youtube.com/embed/2yjwXTZQDDI" },
+          { name: "Bird Dogs: 3x12/side",           video: "https://www.youtube.com/embed/vZSwEbhCyoE" },
+          { name: "Thoracic Rotations: 2x8/side",   video: "https://www.youtube.com/embed/xfSNVB6T6r8" }
         ]
       }
     ];
@@ -338,10 +413,8 @@
         ? `Last completed on: ${workoutCompletions[currentWorkoutIndex]}`
         : "Not completed yet.";
 
-      // Build exercises with clickable name
       const exercisesHtml = workout.exercises.map((ex, idx) => `
         <div class="exercise">
-          <!-- Click on the exercise name to toggleVideo -->
           <div>
             ✔️ <span class="exercise-name" onclick="toggleVideo(${idx})">${ex.name}</span>
           </div>
@@ -391,7 +464,7 @@
       renderWorkout();
     }
 
-    // Init first workout
+    // Initialize first workout
     renderWorkout();
   </script>
 </body>
